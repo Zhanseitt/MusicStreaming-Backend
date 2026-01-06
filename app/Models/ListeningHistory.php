@@ -12,7 +12,8 @@ class ListeningHistory extends Model
     protected $fillable = [
         'user_id', 
         'song_id', 
-        'played_at'  // изменили с duration_seconds
+        'played_at',
+        'listened_seconds'
     ];
 
     protected $casts = [

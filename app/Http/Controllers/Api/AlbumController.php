@@ -15,6 +15,7 @@ class AlbumController extends Controller
     public function index()
     {
         $albums = Song::select('album', 'artist_id', 'cover_url')
+            ->where('status', 'approved')
             ->whereNotNull('album')
             ->with('artist')
             ->groupBy('album', 'artist_id', 'cover_url')
@@ -41,6 +42,7 @@ class AlbumController extends Controller
     public function show($albumName)
     {
         $songs = Song::where('album', $albumName)
+            ->where('status', 'approved')
             ->with('artist')
             ->get();
 
@@ -80,6 +82,7 @@ class AlbumController extends Controller
         }
 
         $albums = Song::where('album', 'LIKE', "%{$query}%")
+            ->where('status', 'approved')
             ->whereNotNull('album')
             ->with('artist')
             ->groupBy('album', 'artist_id', 'cover_url', 'id')

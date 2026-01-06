@@ -12,10 +12,13 @@ class Song extends Model
     protected $fillable = [
         'title',
         'artist_id',
+        'genre_id',
         'album',
         'duration',
         'cover_url',
         'audio_url',
+        'status',
+        'rejection_reason',
     ];
 
     protected $casts = [
@@ -32,5 +35,17 @@ class Song extends Model
     public function likedByUsers()
     {
         return $this->belongsToMany(User::class, 'user_liked_songs');
+    }
+
+    // История прослушиваний (таблица listening_history)
+    public function listeningHistory()
+    {
+        return $this->hasMany(ListeningHistory::class, 'song_id');
+    }
+
+    // Жанры
+    public function genres()
+    {
+        return $this->belongsToMany(Genre::class, 'genre_song');
     }
 }

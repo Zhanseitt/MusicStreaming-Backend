@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Song;
+use App\Models\Genre;
 use Illuminate\Http\Request;
 
 class ChartController extends Controller
@@ -15,6 +16,7 @@ class ChartController extends Controller
     public function global()
     {
         $songs = Song::with('artist')
+            ->where('status', 'approved')
             ->orderBy('play_count', 'desc')
             ->limit(50)
             ->get();
@@ -39,6 +41,7 @@ class ChartController extends Controller
         $country = $request->input('country', 'US');
 
         $songs = Song::with('artist')
+            ->where('status', 'approved')
             ->where('country', $country)
             ->orderBy('play_count', 'desc')
             ->limit(50)
@@ -63,11 +66,23 @@ class ChartController extends Controller
     {
         $genre = $request->input('genre', 'pop');
 
-        $songs = Song::with('artist')
-            ->where('genre', $genre)
+        $songsQuery = Song::with('artist')
+            ->where('status', 'approved')
             ->orderBy('play_count', 'desc')
-            ->limit(50)
-            ->get();
+            ->limit(50);
+
+        // Новый источник истины: связь songs<->genres
+        $genreModel = Genre::whereRaw('LOWER(name) = ?', [mb_strtolower((string) $genre)])->first();
+        if ($genreModel) {
+            $songsQuery->whereHas('genres', function ($q) use ($genreModel) {
+                $q->where('genres.id', $genreModel->id);
+            });
+        } else {
+            // Fallback на старое поле songs.genre
+            $songsQuery->where('genre', $genre);
+        }
+
+        $songs = $songsQuery->get();
 
         return response()->json([
             'data' => $songs->map(function($song, $index) {

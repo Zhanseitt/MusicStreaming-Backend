@@ -13,7 +13,10 @@ return new class extends Migration
     {
         Schema::table('artists', function (Blueprint $table) {
             if (!Schema::hasColumn('artists', 'genre')) {
-                $table->string('genre')->nullable()->after('bio');
+                // Важно: в ранней версии таблицы artists колонки bio не было,
+                // поэтому after('bio') мог ломать миграции (особенно не в SQLite).
+                $afterColumn = Schema::hasColumn('artists', 'cover_url') ? 'cover_url' : 'name';
+                $table->string('genre')->nullable()->after($afterColumn);
             }
         });
     }
@@ -24,7 +27,9 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('artists', function (Blueprint $table) {
-            $table->dropColumn('genre');
+            if (Schema::hasColumn('artists', 'genre')) {
+                $table->dropColumn('genre');
+            }
         });
     }
 };

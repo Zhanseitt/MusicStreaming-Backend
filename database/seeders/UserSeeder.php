@@ -15,7 +15,7 @@ class UserSeeder extends Seeder
                 'name' => 'The Weeknd',
                 'email' => 'weeknd@xo.com',
                 'password' => Hash::make('password'),
-                'role' => 'artist', // если есть поле role
+                'role' => 'artist', 
                 'created_at' => now(),
                 'updated_at' => now(),
             ],

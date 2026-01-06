@@ -12,9 +12,7 @@ class Playlist extends Model
     protected $fillable = [
         'user_id', 
         'name', 
-        'description',  // добавили
-        'cover_url',    // добавили
-        'color'         // оставили из старого
+        'color'
     ];
 
     // Связь с владельцем
@@ -26,8 +24,6 @@ class Playlist extends Model
     // Связь с песнями (Многие ко многим)
     public function songs() 
     { 
-        return $this->belongsToMany(Song::class, 'playlist_song')
-                ->withPivot('position', 'added_at')  // изменили order на position
-                ->orderBy('position', 'asc');
+        return $this->belongsToMany(Song::class, 'playlist_song');
     }
 }

@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Comment extends Model
 {
-    protected $fillable = ['user_id', 'song_id', 'content'];
+    protected $fillable = ['user_id', 'song_id', 'content', 'type'];
     // Важно: подгружаем автора комментария
     protected $with = ['user']; 
 
